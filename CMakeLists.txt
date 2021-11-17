@@ -23,7 +23,7 @@ add_executable(ray_wasm ${CPP_SOURCES} ${C_SOURCES})
 target_link_libraries(ray_wasm "raylib")
 
 message(STATUS "Exporting with WASM")
-set(CMAKE_EXECUTABLE_SUFFIX ".wasm")
+set(CMAKE_EXECUTABLE_SUFFIX ".html")
 set_target_properties(ray_wasm PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s WASM=1 -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1 --shell-file ../shell.html")
 
 
