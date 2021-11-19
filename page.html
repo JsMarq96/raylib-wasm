@@ -16,6 +16,7 @@
         let xrButton = null;
         let xrImmersiveRefSpace = null;
         let inlineViewerHelper = null;
+        let xrRefSpace = null;
 
         function initXR() {
             if (navigator.xr) {
@@ -34,11 +35,30 @@
         function sessionStartXR() {
             navigator.xr.requestSession('immersive-vr').then((session) => {
                 if (session) {
-                    
+                    session.requestReferenceSpace('local').then((refSpace) => {
+                        xrRefSpace = refSpace;
+                        session.requestAnimationFrame(onXRFrame);
+                    });
                 } else {
                     // Stinkyyyyy
                 }
             });
+        }
+
+        function createFrame(t, frame) {
+            let pose = frame.getViewerPose(xrRefSpace);
+
+            if (pose) {
+               // Iint frame render
+
+                for(let view of pose.views) {
+                    
+                }
+                
+               // Close frame render
+            } else {
+                // Tracking error
+            }
         }*/
     </script>
 
@@ -78,7 +98,7 @@
 	{{{ SCRIPT }}}
 
     <script>
-        Module.ccall('UpdateDrawFrame', 'void');
+        Module.ccall('UpdateDrawFrame', 'void', ['float', 'float', 'float'], [10.0, 5.0, 10.0]);
     </script>
 
 	</body>

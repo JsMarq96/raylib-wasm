@@ -26,48 +26,80 @@ int screenWidth = 800;
 int screenHeight = 450;
 
 //----------------------------------------------------------------------------------
-// Module Functions Declaration
-//----------------------------------------------------------------------------------
- extern "C" void UpdateDrawFrame(void);     // Update and Draw one frame
-
-//----------------------------------------------------------------------------------
 // Main Enry Point
 //----------------------------------------------------------------------------------
 int EMSCRIPTEN_KEEPALIVE main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+    const int screenWidth = 800;
+    const int screenHeight = 450;
 
+    // NOTE: screenWidth/screenHeight should match VR device aspect ratio
+    InitWindow(screenWidth, screenHeight, "raylib [core] example - vr simulator");
 
-    //emscripten_set_main_loop(UpdateDrawFrame, 0, 1);/*
+    RenderTexture2D target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-    /*CloseWindow(); */       // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
+    // Define the camera to look into our 3d world
+    Camera camera = { 0 };
+    camera.position = (Vector3){ 5.0f, 2.0f, 5.0f };    // Camera position
+    camera.target = (Vector3){ 0.0f, 2.0f, 0.0f };      // Camera looking at point
+    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector
+    camera.fovy = 60.0f;                                // Camera field-of-view Y
+    camera.projection = CAMERA_PERSPECTIVE;             // Camera type
 
+    Vector3 cubePosition = { 0.0f, 0.0f, 0.0f };
+
+    SetCameraMode(camera, CAMERA_FIRST_PERSON);         // Set first person camera mode
+
+    SetTargetFPS(90);
     return 0;
 }
 
 //----------------------------------------------------------------------------------
 // Module Functions Definition
 //----------------------------------------------------------------------------------
- extern "C" void EMSCRIPTEN_KEEPALIVE UpdateDrawFrame(void)
-{
-    // Update
-    //----------------------------------------------------------------------------------
-    // TODO: Update your variables here
-    //----------------------------------------------------------------------------------
+ extern "C" void EMSCRIPTEN_KEEPALIVE UpdateDrawFrame(float position_x,
+                                                      float position_y,
+                                                      float position_z) {
+    Camera camera = { 0 };
+    camera.position = (Vector3){ position_x, position_y, position_z };    // Camera position
+    camera.target = (Vector3){ 0.0f, 2.0f, 0.0f };      // Camera looking at point
+    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector
+    camera.fovy = 60.0f;                                // Camera field-of-view Y
+    camera.projection = CAMERA_PERSPECTIVE;             // Camera type
 
-    // Draw
-    //----------------------------------------------------------------------------------
+    Vector3 cubePosition = { 0.0f, 0.0f, 0.0f };
+
+    SetCameraMode(camera, CAMERA_FIRST_PERSON);         // Set first person camera mode
+
+    // VR device parameters definition
+    VrDeviceInfo device = {
+        // Oculus Rift CV1 parameters for simulator
+        .hResolution = 2160,                 // Horizontal resolution in pixels
+        .vResolution = 1200,                 // Vertical resolution in pixels
+        .hScreenSize = 0.133793f,            // Horizontal size in meters
+        .vScreenSize = 0.0669f,              // Vertical size in meters
+        .vScreenCenter = 0.04678f,           // Screen center in meters
+        .eyeToScreenDistance = 0.041f,       // Distance between eye and display in meters
+        .lensSeparationDistance = 0.07f,     // Lens separation distance in meters
+        .interpupillaryDistance = 0.07f,     // IPD (distance between pupils) in meters
+    };
+
+    // Load VR stereo config for VR device parameteres (Oculus Rift CV1 parameters)
+    VrStereoConfig config = LoadVrStereoConfig(device);
+
     BeginDrawing();
+            ClearBackground(RAYWHITE);
+            BeginVrStereoMode(config);
+                BeginMode3D(camera);
 
-        ClearBackground(RAYWHITE);
+                DrawCube({0.0f, 0.0f, 0.0f}, 2.0f, 2.0f, 2.0f, RED);
+                   // DrawCubeWires(cubePosition, 2.0f, 2.0f, 2.0f, MAROON);
+                    DrawGrid(40, 1.0f);
 
-        DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
-
+                EndMode3D();
+            EndVrStereoMode();
     EndDrawing();
     //----------------------------------------------------------------------------------
 }
