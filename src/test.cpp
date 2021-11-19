@@ -13,7 +13,9 @@
 *
 ********************************************************************************************/
 
-#include "raylib.h"
+#include <raylib.h>
+
+#include <stdio.h>
 
 //#define PLATFORM_WEB
 #include <emscripten/emscripten.h>
@@ -26,23 +28,23 @@ int screenHeight = 450;
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-void UpdateDrawFrame(void);     // Update and Draw one frame
+ extern "C" void UpdateDrawFrame(void);     // Update and Draw one frame
 
 //----------------------------------------------------------------------------------
 // Main Enry Point
 //----------------------------------------------------------------------------------
-int main()
+int EMSCRIPTEN_KEEPALIVE main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
 
-    emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
+    //emscripten_set_main_loop(UpdateDrawFrame, 0, 1);/*
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    CloseWindow();        // Close window and OpenGL context
+    /*CloseWindow(); */       // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
 
     return 0;
@@ -51,7 +53,7 @@ int main()
 //----------------------------------------------------------------------------------
 // Module Functions Definition
 //----------------------------------------------------------------------------------
-void UpdateDrawFrame(void)
+ extern "C" void EMSCRIPTEN_KEEPALIVE UpdateDrawFrame(void)
 {
     // Update
     //----------------------------------------------------------------------------------
@@ -68,4 +70,15 @@ void UpdateDrawFrame(void)
 
     EndDrawing();
     //----------------------------------------------------------------------------------
+}
+
+
+extern "C" void EMSCRIPTEN_KEEPALIVE init_draw_instance() {
+    printf("Test");
+    //InitWindow(800, 450, "raylib [core] example - basic window");
+}
+
+void close_draw_instance() {
+    printf("Close");
+    CloseWindow();
 }

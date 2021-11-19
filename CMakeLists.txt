@@ -4,9 +4,6 @@ SET(CMAKE_TOOLCHAIN_FILE "emsdk/upstream/emscripten/cmake/Modules/Platform/Emscr
 
 project(ray_wasm)
 
-option(OUT_HTML "Output to HTML" OFF)
-option(WASM "Compile to WASM" ON)
-
 set(CMAKE_C_STANDARD 11)
 
 # Avoid building the raylib examples
@@ -24,11 +21,4 @@ target_link_libraries(ray_wasm "raylib")
 
 message(STATUS "Exporting with WASM")
 set(CMAKE_EXECUTABLE_SUFFIX ".html")
-set_target_properties(ray_wasm PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s WASM=1 -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1 --shell-file ../shell.html")
-
-
-if(OUT_HTML)
-    message(STATUS "Exporting with HTML")
-    set(CMAKE_EXECUTABLE_SUFFIX ".html")
-	set_target_properties(ray_wasm PROPERTIES LINK_FLAGS "-s WASM=1 -s EXPORTED_FUNCTIONS='[_main]'")
-endif(OUT_HTML)
+set_target_properties(ray_wasm PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s WASM=1 -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1 -s EXPORTED_RUNTIME_METHODS=['ccall'] --shell-file ../page.html")

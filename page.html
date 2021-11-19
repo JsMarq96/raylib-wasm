@@ -2,21 +2,84 @@
 <html>
 	<head></head>
 	<body>
-		<script>
-			
-			!function(e, t){
-				console.log("Loading client...");
-				var n = "build/ray_wasm.wasm";
-				console.log("Script set to " + n);
-				var o = t.createElement("script");
-				o.async = !0, o.type = "text/javascript", o.src = n, o.onerror = function(t) {
-					console.error("Script Error"), console.error(t), setTimeout(function() {
-						e.location.reload(!0)
-					}, 3e3)
-				};
-				var r = t.getElementsByTagName("script")[0];
-				r.parentNode.insertBefore(o, r)
-			}(window, document);
-		</script>
+
+    <script src='https://cdn.jsdelivr.net/npm/webxr-polyfill@latest/build/webxr-polyfill.js'></script>
+
+    <script type="module">
+        /*import {WebXRButton} from './js/util/webxr-button.js';
+
+        // load Javascript impl of WebXr
+        import WebXRPolyfill from 'webxr-pollyfill';
+
+        // XR globals.
+        let polyfill = new WebXRPolyfill();
+        let xrButton = null;
+        let xrImmersiveRefSpace = null;
+        let inlineViewerHelper = null;
+
+        function initXR() {
+            if (navigator.xr) {
+                navigator.xr.isSessionSupported('inmmersive-vr').then((supported) => {
+                    if (supported) {
+                        // Yaaaay
+                    } else {
+                        // Oh ooooh stinkyyy
+                    }
+                });
+            } else {
+                // oh oooh
+            }
+        }
+
+        function sessionStartXR() {
+            navigator.xr.requestSession('immersive-vr').then((session) => {
+                if (session) {
+                    
+                } else {
+                    // Stinkyyyyy
+                }
+            });
+        }*/
+    </script>
+
+    <div class="emscripten_border">
+      <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+    </div>
+
+
+    <script type='text/javascript'>
+        var Module = {
+            preRun: [],
+            postRun: [],
+            printErr: function(text) {
+                if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+
+                console.error(text);
+            },
+            canvas: (function() {
+                var canvas = document.querySelector('#canvas');
+                //canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+                return canvas;
+            })(),
+        };
+
+        Module.setStatus('Downloading...');
+
+        window.onerror = function() {
+            Module.setStatus('Exception thrown, see JavaScript console');
+            spinnerElement.style.display = 'none';
+            Module.setStatus = function(text) { if (text) Module.printErr('[post-exception status] ' + text); };
+        };
+    </script>
+
+
+
+	{{{ SCRIPT }}}
+
+    <script>
+        Module.ccall('UpdateDrawFrame', 'void');
+    </script>
+
 	</body>
 </html>
