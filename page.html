@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
-	<head></head>
+	<head>    
+    </head>
 	<body>
 
     <script src='https://cdn.jsdelivr.net/npm/webxr-polyfill@latest/build/webxr-polyfill.js'></script>
 
     <script type="module">
-        /*import {WebXRButton} from './js/util/webxr-button.js';
+        import {WebXRButton} from './js/util/webxr-button.js';
 
         // load Javascript impl of WebXr
         import WebXRPolyfill from 'webxr-pollyfill';
@@ -47,59 +48,55 @@
 
         function createFrame(t, frame) {
             let pose = frame.getViewerPose(xrRefSpace);
-
+            console.log("FRAME");
             if (pose) {
-               // Iint frame render
+                // Iint frame render
 
-                for(let view of pose.views) {
-                    
-                }
+                Module.ccall('UpdateDrawFrame', 'void', ['float', 'float', 'float'], [10.0, 5.0, 10.0]);
                 
                // Close frame render
             } else {
                 // Tracking error
             }
-        }*/
+        }
     </script>
 
     <div class="emscripten_border">
       <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
-    </div>
+    </div> 
 
+    <!-- {{{ SCRIPT }}} -->
 
     <script type='text/javascript'>
-        var Module = {
-            preRun: [],
-            postRun: [],
-            printErr: function(text) {
-                if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-
-                console.error(text);
-            },
-            canvas: (function() {
-                var canvas = document.querySelector('#canvas');
-                //canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
-
-                return canvas;
-            })(),
-        };
-
-        Module.setStatus('Downloading...');
-
-        window.onerror = function() {
-            Module.setStatus('Exception thrown, see JavaScript console');
-            spinnerElement.style.display = 'none';
-            Module.setStatus = function(text) { if (text) Module.printErr('[post-exception status] ' + text); };
-        };
-    </script>
-
-
-
-	{{{ SCRIPT }}}
-
-    <script>
+    window.raylib_config_finshed = function () {
         Module.ccall('UpdateDrawFrame', 'void', ['float', 'float', 'float'], [10.0, 5.0, 10.0]);
+        sessionStartXR();
+    };
+
+    var Module = {
+        preRun: [],
+        postRun: [],
+        printErr: function(text) {
+            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+
+            console.error(text);
+        },
+        canvas: (function() {
+            var canvas = document.querySelector('#canvas');
+            //canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+            return canvas;
+        })(),
+    };
+        
     </script>
+
+    <script async type="text/javascript" src="ray_wasm.js">   </script>
+    </script>
+
 
 	</body>
+    <script> 
+ </script>
+
 </html>

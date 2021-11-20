@@ -53,6 +53,9 @@ int EMSCRIPTEN_KEEPALIVE main()
     SetCameraMode(camera, CAMERA_FIRST_PERSON);         // Set first person camera mode
 
     SetTargetFPS(90);
+
+    //EM_ASM( Module.ccall('UpdateDrawFrame', 'void', ['float', 'float', 'float'], [10.0, 5.0, 10.0]););
+    EM_ASM( window.raylib_config_finshed(); );
     return 0;
 }
 
@@ -101,6 +104,7 @@ int EMSCRIPTEN_KEEPALIVE main()
                 EndMode3D();
             EndVrStereoMode();
     EndDrawing();
+    printf("frame\n");
     //----------------------------------------------------------------------------------
 }
 
